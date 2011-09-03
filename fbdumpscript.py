@@ -1,12 +1,12 @@
 import urllib2
 import json
-
+import os
 APP_ID= '221362074553481'
 REDIRECT_URI='http://localhost:3000'
 
 authorize_url = "https://graph.facebook.com/oauth/authorize?type=user_agent&client_id={0}&redirect_uri={1}&scope=user_photos" .format ( APP_ID, REDIRECT_URI)
 
-print 'Please visit this url to get the access token:' +  authorize_url
+print 'Facebook Photo Dump by Victor Vu. This is licensed under the Apache 2.0 License.\n\nPlease visit this url to get the access token:\n' +  authorize_url
 
 accesstoken = raw_input ("Enter Access Token:")
 
@@ -22,5 +22,21 @@ fbjson= fbresponse.read()
 
 sourcesraw=json.loads(fbjson)
 
-print sourcesraw
-print sourcesraw['data']
+print "Found {0} photos. Beginning download.".format(len(sourcesraw['data']))
+
+os.mkdir('facebookphotos')
+
+length= len(sourcesraw['data'])
+count= 1
+for e in sourcesraw['data']:
+    print "Downloading {0} of {1}.".format(count, length)
+    psource= e['source']
+    response=urllib2.urlopen(psource)
+    rawjpeg=response.read()
+    f = open('facebookphotos/{0}.jpg'.format(e['id']), "w")
+    f.write(rawjpeg)
+    f.close()
+    count=count+1
+
+print ('Finished downloading all photos! They can be found in the same directory as this script.')
+
