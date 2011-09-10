@@ -1,8 +1,8 @@
 import urllib2
 import json
 import os
-APP_ID= '221362074553481'
-REDIRECT_URI='http://localhost:3000'
+APP_ID= '221362074553481' #FaceBook App ID
+REDIRECT_URI='http://localhost:3000' #Callback URL
 
 authorize_url = "https://graph.facebook.com/oauth/authorize?type=user_agent&client_id={0}&redirect_uri={1}&scope=user_photos" .format ( APP_ID, REDIRECT_URI)
 
@@ -14,6 +14,9 @@ print 'Making request, please wait'
 
 request_url= "https://graph.facebook.com/me/photos?access_token={0}&limit=100000&fields=source".format(accesstoken)
 
+
+#try to connect to fb, catch any errors while connecting
+#TODO:Implement FB Exceptions
 try:
     fbresponse = urllib2.urlopen(request_url)
 except e:
@@ -28,6 +31,8 @@ os.mkdir('facebookphotos')
 
 length= len(sourcesraw['data'])
 count= 1
+
+#Loops through list of photos and downloads them to a folder locally
 for e in sourcesraw['data']:
     print "Downloading {0} of {1}.".format(count, length)
     psource= e['source']
